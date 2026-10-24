@@ -81,8 +81,11 @@ final class Planner
 	 * @param refreshQuests  re-read every quest's state from the game. Pass true now and then
 	 *                       (and after login), false otherwise to keep this cheap.
 	 * @param includeDiaries plan achievement diaries as well as quests
+	 * @param skillsOnly     skip quests and diaries completely and just train skills to 99
+	 * @param focus          a skill the player picked to train, or null to let the guide choose
 	 */
-	Plan plan(Client client, ZeroToMaxConfig.TrainingStyle style, boolean refreshQuests, boolean includeDiaries)
+	Plan plan(Client client, ZeroToMaxConfig.TrainingStyle style, boolean refreshQuests, boolean includeDiaries,
+		boolean skillsOnly, Skill focus)
 	{
 		if (refreshQuests || states.isEmpty())
 		{
@@ -95,6 +98,30 @@ final class Planner
 		}
 
 		Plan plan = new Plan();
+		if (focus != null)
+		{
+			int level = client.getRealSkillLevel(focus);
+			plan.summary = focus.getName() + " " + level + "/99 | Total level " + client.getTotalLevel();
+			if (level >= 99)
+			{
+				plan.title = focus.getName() + " is 99!";
+				plan.instruction = "Pick another skill, or set \"Train this skill\" back to Off in the settings.";
+				plan.teleport = "Done";
+			}
+			else
+			{
+				trainStep(client, style, plan, focus, 99, "your pick");
+			}
+			plan.roadmap.add("Set \"Train this skill\" to Off to go back to your full plan");
+			return plan;
+		}
+		if (skillsOnly)
+		{
+			// Quest states are still read above: farm patches and teleports need them.
+			plan.summary = "Skills only | Total level " + client.getTotalLevel();
+			planSkills(client, style, plan);
+			return plan;
+		}
 		int questPoints = client.getVarpValue(VarPlayerID.QP);
 		int combat = client.getLocalPlayer() != null ? client.getLocalPlayer().getCombatLevel() : 0;
 

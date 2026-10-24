@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
@@ -105,6 +106,8 @@ public class ZeroToMaxPlugin extends Plugin
 	private int ticksSinceQuestRefresh;
 	private ZeroToMaxConfig.TrainingStyle lastStyle;
 	private boolean lastIncludeDiaries;
+	private boolean lastSkillsOnly;
+	private ZeroToMaxConfig.FocusSkill lastFocus;
 
 	// Written on the client thread, read by overlays and the panel -> volatile
 	@Getter
@@ -117,8 +120,6 @@ public class ZeroToMaxPlugin extends Plugin
 	private volatile String currentStepInstruction = "Please wait...";
 	@Getter
 	private volatile String gpsStatusText = "-";
-	@Getter
-	private volatile Color gpsColor = Color.CYAN;
 	@Getter
 	private volatile String progressText = "";
 	@Getter
@@ -320,9 +321,12 @@ public class ZeroToMaxPlugin extends Plugin
 
 		ZeroToMaxConfig.TrainingStyle style = config.trainingStyle();
 		boolean includeDiaries = config.includeDiaries();
+		boolean skillsOnly = config.skillsOnly();
+		ZeroToMaxConfig.FocusSkill focus = config.focusSkill();
 		ticksSincePlan++;
 		ticksSinceQuestRefresh++;
-		if (!replanNow && ticksSincePlan < REPLAN_EVERY_TICKS && style == lastStyle && includeDiaries == lastIncludeDiaries)
+		if (!replanNow && ticksSincePlan < REPLAN_EVERY_TICKS && style == lastStyle && includeDiaries == lastIncludeDiaries
+			&& skillsOnly == lastSkillsOnly && focus == lastFocus)
 		{
 			return;
 		}
@@ -330,13 +334,16 @@ public class ZeroToMaxPlugin extends Plugin
 		replanNow = false;
 		lastStyle = style;
 		lastIncludeDiaries = includeDiaries;
+		lastSkillsOnly = skillsOnly;
+		lastFocus = focus;
 
 		boolean refreshQuests = ticksSinceQuestRefresh >= QUEST_REFRESH_EVERY_TICKS;
 		if (refreshQuests)
 		{
 			ticksSinceQuestRefresh = 0;
 		}
-		Planner.Plan plan = planner.plan(client, style, refreshQuests, includeDiaries);
+		Planner.Plan plan = planner.plan(client, style, refreshQuests, includeDiaries, skillsOnly,
+			focus == null || focus == ZeroToMaxConfig.FocusSkill.OFF ? null : Skill.valueOf(focus.name()));
 
 		accountStatusText = plan.summary;
 		Predicate<String> questDone = planner::isQuestFinished;
@@ -420,14 +427,12 @@ public class ZeroToMaxPlugin extends Plugin
 		if (dest == null)
 		{
 			gpsStatusText = teleGuide;
-			gpsColor = Color.CYAN;
 			return;
 		}
 
 		if (client.getTopLevelWorldView().isInstance())
 		{
 			gpsStatusText = "In an instance (e.g. your POH)";
-			gpsColor = Color.GREEN;
 			return;
 		}
 
@@ -436,17 +441,14 @@ public class ZeroToMaxPlugin extends Plugin
 		{
 			String suggestion = teleportFinder.suggest(client, dest, id -> planner.questState(client, id));
 			gpsStatusText = suggestion != null ? suggestion : teleGuide;
-			gpsColor = Color.CYAN;
 		}
 		else if (distance > 8)
 		{
 			gpsStatusText = "Follow the line (" + distance + " tiles)";
-			gpsColor = Color.ORANGE;
 		}
 		else
 		{
 			gpsStatusText = "You've arrived";
-			gpsColor = Color.GREEN;
 		}
 	}
 

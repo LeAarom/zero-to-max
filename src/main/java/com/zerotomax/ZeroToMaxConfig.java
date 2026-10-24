@@ -102,6 +102,49 @@ public interface ZeroToMaxConfig extends Config
 		return Color.CYAN;
 	}
 
+	/** A skill to focus on, or OFF to let the guide pick. Names match net.runelite.api.Skill. */
+	enum FocusSkill
+	{
+		OFF("Off (guide picks)"),
+		ATTACK("Attack"),
+		STRENGTH("Strength"),
+		DEFENCE("Defence"),
+		RANGED("Ranged"),
+		PRAYER("Prayer"),
+		MAGIC("Magic"),
+		RUNECRAFT("Runecraft"),
+		CONSTRUCTION("Construction"),
+		HITPOINTS("Hitpoints"),
+		AGILITY("Agility"),
+		HERBLORE("Herblore"),
+		THIEVING("Thieving"),
+		CRAFTING("Crafting"),
+		FLETCHING("Fletching"),
+		SLAYER("Slayer"),
+		HUNTER("Hunter"),
+		MINING("Mining"),
+		SMITHING("Smithing"),
+		FISHING("Fishing"),
+		COOKING("Cooking"),
+		FIREMAKING("Firemaking"),
+		WOODCUTTING("Woodcutting"),
+		FARMING("Farming"),
+		SAILING("Sailing");
+
+		private final String label;
+
+		FocusSkill(String label)
+		{
+			this.label = label;
+		}
+
+		@Override
+		public String toString()
+		{
+			return label;
+		}
+	}
+
 	enum JewelleryBox
 	{
 		NONE("None"),
@@ -184,6 +227,30 @@ public interface ZeroToMaxConfig extends Config
 		position = 10
 	)
 	String goalsSection = "goalsSection";
+
+	@ConfigItem(
+		keyName = "focusSkill",
+		name = "Train this skill",
+		description = "Pick a skill and the guide shows the best way to train it to 99, using your training style. Overrides quests and diaries until you set it back to Off.",
+		section = goalsSection,
+		position = 9
+	)
+	default FocusSkill focusSkill()
+	{
+		return FocusSkill.OFF;
+	}
+
+	@ConfigItem(
+		keyName = "skillsOnly",
+		name = "Skills only (no quests)",
+		description = "Skip quests and diaries and just plan your skills to 99. Farm runs, timers, teleports and Slayer help still work.",
+		section = goalsSection,
+		position = 10
+	)
+	default boolean skillsOnly()
+	{
+		return false;
+	}
 
 	@ConfigItem(
 		keyName = "includeDiaries",

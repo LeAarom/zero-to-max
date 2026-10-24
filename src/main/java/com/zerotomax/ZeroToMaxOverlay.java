@@ -82,7 +82,25 @@ public class ZeroToMaxOverlay extends OverlayPanel
 		String account = plugin.getAccountStatusText();
 		if (notEmpty(account))
 		{
-			text(account.replace(" | ", " · "), DIM, null);
+			// "Quests 94/184 ... QP 169" on one line, then "Diaries 0/48" under it, so nothing wraps
+			String[] parts = account.split(" \\| ");
+			if (parts.length >= 2)
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left(parts[0])
+					.leftColor(DIM)
+					.right(parts[parts.length - 1])
+					.rightColor(DIM)
+					.build());
+				for (int i = 1; i < parts.length - 1; i++)
+				{
+					text(parts[i], DIM, null);
+				}
+			}
+			else
+			{
+				text(account, DIM, null);
+			}
 		}
 
 		panelComponent.setPreferredSize(new Dimension(WIDTH, 0));
