@@ -102,6 +102,82 @@ public interface ZeroToMaxConfig extends Config
 		return Color.CYAN;
 	}
 
+	enum JewelleryBox
+	{
+		NONE("None"),
+		BASIC("Basic"),
+		FANCY("Fancy"),
+		ORNATE("Ornate");
+
+		private final String label;
+
+		JewelleryBox(String label)
+		{
+			this.label = label;
+		}
+
+		@Override
+		public String toString()
+		{
+			return label;
+		}
+	}
+
+	@ConfigSection(
+		name = "Your house (POH)",
+		description = "What your house has, so teleport suggestions can use it",
+		position = 20
+	)
+	String houseSection = "houseSection";
+
+	@ConfigItem(
+		keyName = "jewelleryBox",
+		name = "Jewellery box",
+		description = "The jewellery box in your house",
+		section = houseSection,
+		position = 21
+	)
+	default JewelleryBox jewelleryBox()
+	{
+		return JewelleryBox.NONE;
+	}
+
+	@ConfigItem(
+		keyName = "houseSpiritTree",
+		name = "Spirit tree in house",
+		description = "Your house has a spirit tree",
+		section = houseSection,
+		position = 22
+	)
+	default boolean houseSpiritTree()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "houseFairyRing",
+		name = "Fairy ring in house",
+		description = "Your house has a fairy ring",
+		section = houseSection,
+		position = 23
+	)
+	default boolean houseFairyRing()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "useMaxHouses",
+		name = "Suggest max houses (W330)",
+		description = "Suggest public max houses on world 330 (join one from the house advertisement board next to any house portal) when their portals, jewellery box or spirit tree get you closer",
+		section = houseSection,
+		position = 24
+	)
+	default boolean useMaxHouses()
+	{
+		return true;
+	}
+
 	@ConfigSection(
 		name = "Goals",
 		description = "What the guide plans for you",

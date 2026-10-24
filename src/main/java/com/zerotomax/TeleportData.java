@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Every teleport spell, teleport item and fairy ring, with where it lands and what it needs.
  * GENERATED from Shortest Path's transport files (teleportation_spells, teleportation_items,
- * fairy_rings). Row: kind, name, landing x, y, plane, item ids (any one), skill requirements,
+ * fairy_rings, teleportation_boxes, spirit_trees, teleportation_portals_poh). Row: kind, name, landing x, y, plane, item ids (any one), skill requirements,
  * quest requirements (RuneLite Quest names), varbit and varplayer requirements, note.
  */
 final class TeleportData
@@ -51,6 +51,7 @@ final class TeleportData
 		part0(list);
 		part1(list);
 		part2(list);
+		part3(list);
 		return list;
 	}
 
@@ -482,6 +483,92 @@ final class TeleportData
 		add(list, TeleportFinder.Kind.FAIRY_RING, "Fairy ring DLQ", 3423, 3016, 0, "", "", "", "", "", "");
 		add(list, TeleportFinder.Kind.FAIRY_RING, "Fairy ring DLR", 2213, 3099, 0, "", "", "", "", "", "");
 		add(list, TeleportFinder.Kind.FAIRY_RING, "Fairy ring DLS", 3447, 9824, 0, "", "", "IN_SEARCH_OF_THE_MYREQUE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Emir's Arena", 3315, 3235, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Castle Wars", 2440, 3090, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Ferox Enclave", 3151, 3635, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Fortis Colosseum", 1793, 3107, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Burthorpe", 2899, 3553, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Barbarian Outpost", 2520, 3571, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Chasm of Tears", 3245, 9500, 2, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Corporeal Beast", 2964, 4382, 2, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Wintertodt Camp", 1631, 3940, 0, "", "", "", "", "", "1");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Warriors' Guild", 2882, 3547, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Champions' Guild", 3192, 3368, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Monastery", 3052, 3490, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Ranging Guild", 2653, 3439, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Fishing Guild", 2611, 3390, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Mining Guild", 3049, 9763, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Crafting Guild", 2933, 3295, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Cooking Guild", 3144, 3438, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Woodcutting Guild", 1662, 3505, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Farming Guild", 1248, 3719, 0, "", "", "", "", "", "2");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Miscellania", 2534, 3862, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Grand Exchange", 3163, 3478, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Falador Park", 2995, 3375, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Dondakan's Rock", 2824, 10168, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Edgeville", 3087, 3496, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Karamja", 2918, 3176, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Draynor Village", 3105, 3251, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_BOX, "Jewellery box: Al Kharid", 3293, 3163, 0, "", "", "", "", "", "3");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Tree Gnome Village", 2542, 3170, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Gnome Stronghold", 2461, 3444, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Battlefield of Khazard", 2555, 3259, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Grand Exchange", 3185, 3508, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Feldip Hills", 2488, 2850, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+	}
+
+	private static void part3(List<TeleportFinder.Teleport> list)
+	{
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Prifddinas", 3274, 6123, 0, "", "", "TREE_GNOME_VILLAGE,SONG_OF_THE_ELVES", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Port Sarim", 3058, 3257, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Etceteria", 2613, 3855, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Brimhaven", 2800, 3203, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Hosidius", 1693, 3540, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Farming Guild", 1251, 3750, 0, "", "", "TREE_GNOME_VILLAGE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Poison Waste", 2339, 3109, 0, "", "", "THE_PATH_OF_GLOUPHRIE", "", "", "");
+		add(list, TeleportFinder.Kind.POH_SPIRIT_TREE, "Spirit tree: Laguna Aurorae", 1202, 2785, 0, "", "", "PANDEMONIUM", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Ape Atoll Dungeon Portal", 2771, 9102, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Annakarl Portal", 3288, 3888, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Ardougne Portal", 2662, 3305, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Arceuus Library Portal", 1632, 3837, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Barbarian Outpost Portal", 2543, 3569, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Barrows Portal", 3564, 3315, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Battlefront Portal", 1347, 3740, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Camelot Portal", 2757, 3479, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Seers' Village Portal", 2726, 3487, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Carrallanger Portal", 3158, 3666, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Catherby Portal", 2801, 3449, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Civitas illa Fortis Portal", 1681, 3133, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Cemetery Portal", 2981, 3764, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Dareeyak Portal", 2968, 3696, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Draynor Manor Portal", 3109, 3351, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Falador Portal", 2964, 3378, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Fenkenstrain's Castle Portal", 3548, 3529, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Fishing Guild Portal", 2613, 3391, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Ghorrock Portal", 2976, 3872, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Grand Exchange Portal", 3165, 3479, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Harmony Island Portal", 3797, 2866, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Ice Plateau Portal", 2975, 3938, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Kharyrll Portal", 3494, 3473, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Kourend Portal", 1641, 3673, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Lassar Portal", 3004, 3470, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Lumbridge Portal", 3221, 3218, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Lunar Isle Portal", 2113, 3915, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Marim Portal", 2797, 2798, 1, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Mind Altar Portal", 2979, 3510, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Ourania Portal", 2468, 3246, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Paddewwa Portal", 3097, 9881, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Port Khazard Portal", 2636, 3167, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Salve Graveyard Portal", 3433, 3461, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Senntisten Portal", 3320, 3337, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Trollheim Portal", 2890, 3679, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Troll Stronghold Portal", 2845, 3694, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Varrock Portal", 3213, 3424, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Waterbirth Island Portal", 2546, 3755, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Weiss Portal", 2846, 3938, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "West Ardougne Portal", 2500, 3290, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Watchtower Portal", 2546, 3114, 0, "", "", "", "", "", "");
+		add(list, TeleportFinder.Kind.POH_PORTAL, "Yanille Portal", 2584, 3097, 0, "", "", "", "", "", "");
 	}
 
 	private static void add(List<TeleportFinder.Teleport> list, TeleportFinder.Kind kind, String name, int x, int y, int plane,

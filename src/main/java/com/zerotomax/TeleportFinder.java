@@ -30,7 +30,12 @@ final class TeleportFinder
 	{
 		SPELL,
 		ITEM,
-		FAIRY_RING
+		FAIRY_RING,
+		/** Jewellery box in a house; the note holds the tier (1 basic, 2 fancy, 3 ornate). */
+		POH_BOX,
+		POH_SPIRIT_TREE,
+		/** Portal nexus destinations: only suggested through max houses. */
+		POH_PORTAL
 	}
 
 	@Getter
@@ -102,6 +107,16 @@ final class TeleportFinder
 	private static final int FAIRY_RING_PENALTY = 15;
 	/** Only suggest a teleport if it saves at least this many tiles over walking. */
 	private static final int MIN_SAVING = 20;
+	/** Extra "tiles" for using your own house (teleport there first). */
+	private static final int OWN_HOUSE_PENALTY = 5;
+	/** Extra "tiles" for a max house (hop to W330, go to a house portal, join a house). */
+	private static final int MAX_HOUSE_PENALTY = 25;
+
+	// What the player's own house has, from the plugin settings
+	private int boxTier;
+	private boolean houseSpiritTree;
+	private boolean houseFairyRing;
+	private boolean maxHouses;
 
 	private final List<Teleport> teleports;
 	private final Set<Integer> teleportItemIds = new HashSet<>();
@@ -119,6 +134,15 @@ final class TeleportFinder
 				teleportItemIds.add(id);
 			}
 		}
+	}
+
+	/** House settings: jewellery box tier (0 none .. 3 ornate), spirit tree, fairy ring, use max houses. */
+	void setHouse(int boxTier, boolean spiritTree, boolean fairyRing, boolean useMaxHouses)
+	{
+		this.boxTier = boxTier;
+		this.houseSpiritTree = spiritTree;
+		this.houseFairyRing = fairyRing;
+		this.maxHouses = useMaxHouses;
 	}
 
 	/** Refresh inventory and worn items from the client. */
@@ -179,6 +203,7 @@ final class TeleportFinder
 		int unownedScore = Integer.MAX_VALUE;
 		Teleport otherBook = null;
 		int otherBookScore = Integer.MAX_VALUE;
+		boolean bestViaMaxHouse = false;
 
 		for (Teleport t : teleports)
 		{
@@ -187,6 +212,7 @@ final class TeleportFinder
 				continue;
 			}
 			int score = distance(t.getLanding(), dest);
+			boolean viaMaxHouse = false;
 			switch (t.getKind())
 			{
 				case SPELL:
@@ -216,19 +242,70 @@ final class TeleportFinder
 					{
 						continue;
 					}
-					score += FAIRY_RING_PENALTY;
+					score += houseFairyRing ? OWN_HOUSE_PENALTY : FAIRY_RING_PENALTY;
+					break;
+				case POH_BOX:
+				{
+					int tier = t.getNote().isEmpty() ? 3 : Integer.parseInt(t.getNote());
+					if (tier <= boxTier)
+					{
+						score += OWN_HOUSE_PENALTY;
+					}
+					else if (maxHouses)
+					{
+						score += MAX_HOUSE_PENALTY;
+						viaMaxHouse = true;
+					}
+					else
+					{
+						continue;
+					}
+					break;
+				}
+				case POH_SPIRIT_TREE:
+					if (houseSpiritTree)
+					{
+						score += OWN_HOUSE_PENALTY;
+					}
+					else if (maxHouses)
+					{
+						score += MAX_HOUSE_PENALTY;
+						viaMaxHouse = true;
+					}
+					else
+					{
+						continue;
+					}
+					break;
+				case POH_PORTAL:
+					if (!maxHouses)
+					{
+						continue;
+					}
+					score += MAX_HOUSE_PENALTY;
+					viaMaxHouse = true;
 					break;
 			}
 			if (score < bestScore)
 			{
 				bestScore = score;
 				best = t;
+				bestViaMaxHouse = viaMaxHouse;
 			}
 		}
 
 		StringBuilder out = new StringBuilder();
 		if (best != null && bestScore + MIN_SAVING < walk)
 		{
+			if (bestViaMaxHouse)
+			{
+				out.append("Max house on W330 (house advert board) -> ");
+			}
+			else if (best.getKind() == Kind.POH_BOX || best.getKind() == Kind.POH_SPIRIT_TREE
+				|| (best.getKind() == Kind.FAIRY_RING && houseFairyRing))
+			{
+				out.append("House teleport -> ");
+			}
 			out.append(describe(best)).append(" (lands ").append(distance(best.getLanding(), dest)).append(" tiles away)");
 		}
 		if (betterUnowned != null && unownedScore + MIN_SAVING < Math.min(walk, bestScore))
@@ -346,6 +423,7 @@ final class TeleportFinder
 			case SPELL:
 				return "Cast " + t.getName() + (t.getNote().isEmpty() ? "" : " [" + t.getNote() + "]");
 			case FAIRY_RING:
+			case POH_PORTAL:
 				return t.getName();
 			default:
 				return "Use " + baseName(t) + " -> " + placeName(t);

@@ -260,6 +260,7 @@ public class ZeroToMaxPlugin extends Plugin
 		accountStatusText = plan.summary;
 		Predicate<String> questDone = planner::isQuestFinished;
 		teleportFinder.refreshCarried(client);
+		teleportFinder.setHouse(config.jewelleryBox().ordinal(), config.houseSpiritTree(), config.houseFairyRing(), config.useMaxHouses());
 
 		FarmTracker.RunType run = activeRun;
 		FarmTracker.FarmStep farmStep = run == null ? null : farmTracker.nextStep(run, questDone);
