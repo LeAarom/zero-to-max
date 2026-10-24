@@ -2,17 +2,27 @@ package com.zerotomax;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
-import net.runelite.client.ui.overlay.components.TitleComponent;
 
+/**
+ * The in-game box. Black and white like the side panel: the step in bold white, what to do in
+ * light grey, and the small stuff in dark grey. Text runs left to right so long lines wrap neatly.
+ */
 public class ZeroToMaxOverlay extends OverlayPanel
 {
+	private static final Color WHITE = Color.WHITE;
+	private static final Color LIGHT = new Color(0xD2, 0xD2, 0xD2);
+	private static final Color DIM = new Color(0x8C, 0x8C, 0x8C);
+	private static final int WIDTH = 210;
+
 	private final Client client;
 	private final ZeroToMaxPlugin plugin;
 	private final ZeroToMaxConfig config;
@@ -35,54 +45,69 @@ public class ZeroToMaxOverlay extends OverlayPanel
 			return null;
 		}
 
-		panelComponent.getChildren().add(TitleComponent.builder()
-			.text("Zero-to-Max Guide")
-			.color(Color.GREEN)
-			.build());
-
-		addLine("Account:", plugin.getAccountStatusText(), null);
-		addLine("Step:", plugin.getCurrentStepTitle(), Color.YELLOW);
+		text("ZERO TO MAX", DIM, null);
+		text(plugin.getCurrentStepTitle(), WHITE, FontManager.getRunescapeBoldFont());
+		text(plugin.getCurrentStepInstruction(), LIGHT, null);
+		text(plugin.getGpsStatusText(), WHITE, null);
 
 		String method = plugin.getActiveMethodName();
-		if (method != null && !method.isEmpty())
+		if (notEmpty(method))
 		{
-			addLine("Style [" + config.cycleStyleHotkey() + "]:", config.trainingStyle() + " - " + method, Color.MAGENTA);
+			text(config.trainingStyle() + " · " + method + "  [" + config.cycleStyleHotkey() + "]", DIM, null);
 		}
 
-		addLine("Teleport:", plugin.getGpsStatusText(), plugin.getGpsColor());
-		addLine("Action:", plugin.getCurrentStepInstruction(), null);
-
 		String progress = plugin.getProgressText();
-		if (progress != null && !progress.isEmpty())
+		if (notEmpty(progress))
 		{
-			addLine("Progress:", progress, Color.ORANGE);
+			text(progress, DIM, null);
 		}
 
 		String slayer = plugin.getSlayerText();
-		if (slayer != null && !slayer.isEmpty())
+		if (notEmpty(slayer))
 		{
-			addLine("Slayer:", slayer, Color.RED);
+			text("Slayer: " + slayer, LIGHT, null);
 		}
 
 		String farm = plugin.getFarmAlertText();
-		if (farm != null && !farm.isEmpty())
+		if (notEmpty(farm))
 		{
-			addLine("Farming:", farm, Color.GREEN);
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Farming")
+				.leftColor(DIM)
+				.right(farm)
+				.rightColor(WHITE)
+				.build());
 		}
 
-		panelComponent.setPreferredSize(new Dimension(300, 0));
+		String account = plugin.getAccountStatusText();
+		if (notEmpty(account))
+		{
+			text(account.replace(" | ", " · "), DIM, null);
+		}
+
+		panelComponent.setPreferredSize(new Dimension(WIDTH, 0));
 		return super.render(graphics);
 	}
 
-	private void addLine(String left, String right, Color rightColor)
+	/** One left-aligned line (wraps when long). */
+	private void text(String value, Color color, Font font)
 	{
-		LineComponent.LineComponentBuilder b = LineComponent.builder()
-			.left(left)
-			.right(right == null ? "-" : right);
-		if (rightColor != null)
+		if (!notEmpty(value))
 		{
-			b.rightColor(rightColor);
+			return;
+		}
+		LineComponent.LineComponentBuilder b = LineComponent.builder()
+			.left(value)
+			.leftColor(color);
+		if (font != null)
+		{
+			b.leftFont(font);
 		}
 		panelComponent.getChildren().add(b.build());
+	}
+
+	private static boolean notEmpty(String s)
+	{
+		return s != null && !s.isEmpty();
 	}
 }

@@ -30,17 +30,24 @@ public final class FarmTracker
 {
 	public enum RunType
 	{
-		HERB("Herb run"),
-		TREE("Tree run"),
-		FRUIT_TREE("Fruit tree run"),
-		BIRDHOUSE("Birdhouse run");
+		HERB("Herb run", "Herbs"),
+		TREE("Tree run", "Trees"),
+		FRUIT_TREE("Fruit tree run", "Fruit trees"),
+		HARDWOOD("Hardwood run", "Hardwood"),
+		CALQUAT("Calquat run", "Calquat"),
+		SPIRIT_TREE("Spirit tree run", "Spirit trees"),
+		BIRDHOUSE("Birdhouse run", "Birdhouses");
 
 		@Getter
 		private final String label;
+		/** Short name for the timer list. */
+		@Getter
+		private final String shortName;
 
-		RunType(String label)
+		RunType(String label, String shortName)
 		{
 			this.label = label;
+			this.shortName = shortName;
 		}
 	}
 
@@ -49,6 +56,8 @@ public final class FarmTracker
 		READY,
 		EMPTY,
 		GROWING,
+		/** A spirit tree that is fully grown and already checked: leave it standing. */
+		GROWN,
 		DISEASED,
 		DEAD,
 		UNKNOWN
@@ -69,10 +78,21 @@ public final class FarmTracker
 		final String quest;
 		/** Diary reward varbit that must be set, or -1. */
 		final int diaryVarbit;
+		/** Another skill needed to reach the patch (for example Sailing), or null. */
+		final Skill otherSkill;
+		final int otherLevel;
 
 		Patch(RunType type, String name, int regionId, int varbit, PatchImplementation implementation,
 			int x, int y, String teleport, int farmingLevel, String quest, int diaryVarbit)
 		{
+			this(type, name, regionId, varbit, implementation, x, y, teleport, farmingLevel, quest, diaryVarbit, null, 0);
+		}
+
+		Patch(RunType type, String name, int regionId, int varbit, PatchImplementation implementation,
+			int x, int y, String teleport, int farmingLevel, String quest, int diaryVarbit, Skill otherSkill, int otherLevel)
+		{
+			this.otherSkill = otherSkill;
+			this.otherLevel = otherLevel;
 			this.type = type;
 			this.name = name;
 			this.regionId = regionId;
@@ -160,7 +180,39 @@ public final class FarmTracker
 		new Patch(RunType.FRUIT_TREE, "Farming Guild", 4922, VarbitID.FARMING_TRANSMIT_K, PatchImplementation.FRUIT_TREE, 1242, 3758,
 			"Skills necklace (Farming Guild)", 85, null, -1),
 		new Patch(RunType.FRUIT_TREE, "Kastori", 5423, VarbitID.FARMING_TRANSMIT_B, PatchImplementation.FRUIT_TREE, 1350, 3057,
-			"Pendant of ates or fairy ring", 0, "CHILDREN_OF_THE_SUN", -1)
+			"Pendant of ates or fairy ring", 0, "CHILDREN_OF_THE_SUN", -1),
+
+		// Hardwood trees (Quest Helper's tree run; RuneLite's FarmingWorld for the patch ids)
+		new Patch(RunType.HARDWOOD, "Fossil Island (west)", 14651, VarbitID.FARMING_TRANSMIT_C, PatchImplementation.HARDWOOD_TREE, 3702, 3837,
+			"Digsite pendant (Fossil Island), then the magic mushtree to House on the Hill", 35, "BONE_VOYAGE", -1),
+		new Patch(RunType.HARDWOOD, "Fossil Island (middle)", 14651, VarbitID.FARMING_TRANSMIT_B, PatchImplementation.HARDWOOD_TREE, 3708, 3833,
+			"Next to the west patch", 35, "BONE_VOYAGE", -1),
+		new Patch(RunType.HARDWOOD, "Fossil Island (east)", 14651, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.HARDWOOD_TREE, 3715, 3835,
+			"Next to the middle patch", 35, "BONE_VOYAGE", -1),
+		new Patch(RunType.HARDWOOD, "Avium Savannah", 6702, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.HARDWOOD_TREE, 1687, 2972,
+			"Fairy ring AJP or Quetzal whistle", 35, "THE_RIBBITING_TALE_OF_A_LILY_PAD_LABOUR_DISPUTE", -1),
+		new Patch(RunType.HARDWOOD, "Anglers' Retreat", 9770, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.HARDWOOD_TREE, 2470, 2704,
+			"Sail to Anglers' Retreat", 35, null, -1, Skill.SAILING, 51),
+
+		// Calquat trees
+		new Patch(RunType.CALQUAT, "Tai Bwo Wannai", 11056, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.CALQUAT, 2795, 3102,
+			"Tai Bwo Wannai teleport, or fairy ring CKR and walk", 72, null, -1),
+		new Patch(RunType.CALQUAT, "Kastori", 5423, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.CALQUAT, 1366, 3033,
+			"Pendant of ates or fairy ring", 72, "CHILDREN_OF_THE_SUN", -1),
+		new Patch(RunType.CALQUAT, "Great Conch", 12581, VarbitID.FARMING_TRANSMIT_C, PatchImplementation.CALQUAT, 3129, 2406,
+			"Sail to the Great Conch", 72, "TROUBLED_TORTUGANS", -1),
+
+		// Spirit trees (patch areas from Shortest Path's spirit-tree-patches.tsv)
+		new Patch(RunType.SPIRIT_TREE, "Port Sarim", 12082, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.SPIRIT_TREE, 3060, 3258,
+			"Amulet of glory (Draynor Village), then walk south to Port Sarim", 83, null, -1),
+		new Patch(RunType.SPIRIT_TREE, "Etceteria", 10300, VarbitID.FARMING_TRANSMIT_B, PatchImplementation.SPIRIT_TREE, 2613, 3857,
+			"Ring of wealth (Miscellania) or fairy ring CIP", 83, "THRONE_OF_MISCELLANIA", -1),
+		new Patch(RunType.SPIRIT_TREE, "Brimhaven", 11058, VarbitID.FARMING_TRANSMIT_B, PatchImplementation.SPIRIT_TREE, 2802, 3203,
+			"Charter ship or boat to Brimhaven", 83, null, -1),
+		new Patch(RunType.SPIRIT_TREE, "Hosidius", 6967, VarbitID.FARMING_TRANSMIT_F, PatchImplementation.SPIRIT_TREE, 1693, 3542,
+			"Xeric's talisman or Hosidius teleport", 83, null, -1),
+		new Patch(RunType.SPIRIT_TREE, "Farming Guild", 4922, VarbitID.FARMING_TRANSMIT_A, PatchImplementation.SPIRIT_TREE, 1253, 3750,
+			"Skills necklace (Farming Guild)", 85, null, -1)
 	));
 
 	// {name, farming level} - OSRS Wiki Farming/Level up table
@@ -176,6 +228,13 @@ public final class FarmTracker
 		{"Apple", 27, "9 sweetcorn"}, {"Banana", 33, "4 baskets of apples"}, {"Orange", 39, "3 baskets of strawberries"},
 		{"Curry", 42, "5 baskets of bananas"}, {"Pineapple", 51, "10 watermelons"}, {"Papaya", 57, "10 pineapples"},
 		{"Palm", 68, "15 papaya fruit"}, {"Dragonfruit", 81, "15 coconuts"}};
+	private static final Object[][] HARDWOOD_SAPLINGS = {
+		{"Teak", 35, "15 limpwurt roots"}, {"Mahogany", 55, "25 yanillian hops"}, {"Camphor", 66, "10 white berries"},
+		{"Ironwood", 80, "10 curry leaves"}, {"Rosewood", 92, "8 dragonfruit"}};
+	private static final Object[][] CALQUAT_SAPLINGS = {{"Calquat", 72, "8 poison ivy berries"}};
+	private static final Object[][] SPIRIT_SAPLINGS = {{"Spirit", 83, "5 monkey nuts, 1 monkey bar and 1 ground tooth"}};
+	/** How many spirit trees you can have at once, by Farming level (OSRS Wiki). */
+	private static final int[][] SPIRIT_TREE_LIMITS = {{83, 1}, {88, 2}, {93, 3}, {96, 4}, {99, 99}};
 
 	private static final int[] BIRDHOUSE_VARPS = {
 		VarPlayerID.BIRDHOUSE_TRANSMIT_A, VarPlayerID.BIRDHOUSE_TRANSMIT_B,
@@ -220,12 +279,14 @@ public final class FarmTracker
 		long now = Instant.now().getEpochSecond();
 		long earliest = Long.MAX_VALUE;
 		boolean anyKnown = false;
+		boolean anyUnlocked = false;
 		for (Patch p : PATCHES)
 		{
 			if (p.type != type || !isUnlocked(p, questDone))
 			{
 				continue;
 			}
+			anyUnlocked = true;
 			long[] readyAt = new long[1];
 			Status s = status(p, readyAt);
 			if (s == Status.UNKNOWN)
@@ -242,13 +303,17 @@ public final class FarmTracker
 				earliest = Math.min(earliest, readyAt[0]);
 			}
 		}
+		if (!anyUnlocked)
+		{
+			return "Locked";
+		}
 		if (!anyKnown)
 		{
-			return "Not tracked yet";
+			return "Not tracked";
 		}
 		if (earliest == Long.MAX_VALUE)
 		{
-			return "Nothing planted";
+			return type == RunType.SPIRIT_TREE ? "Nothing to do" : "Nothing planted";
 		}
 		return format(earliest - now);
 	}
@@ -291,19 +356,36 @@ public final class FarmTracker
 			return nextBirdhouse(questDone);
 		}
 		List<Patch> todo = new ArrayList<>();
-		int unlocked = 0;
+		int done = 0;
+		int planted = 0;
 		for (Patch p : PATCHES)
 		{
 			if (p.type != type || !isUnlocked(p, questDone))
 			{
 				continue;
 			}
-			unlocked++;
 			Status s = status(p, new long[1]);
-			if (s != Status.GROWING)
+			if (s == Status.GROWING || s == Status.GROWN)
+			{
+				done++;
+			}
+			if (s != Status.EMPTY && s != Status.UNKNOWN)
+			{
+				planted++;
+			}
+			if (s != Status.GROWING && s != Status.GROWN)
 			{
 				todo.add(p);
 			}
+		}
+		if (type == RunType.SPIRIT_TREE && planted >= spiritTreeLimit())
+		{
+			// At the limit: only visit patches that already have a tree.
+			todo.removeIf(p ->
+			{
+				Status s = status(p, new long[1]);
+				return s == Status.EMPTY || s == Status.UNKNOWN;
+			});
 		}
 		if (todo.isEmpty())
 		{
@@ -313,7 +395,7 @@ public final class FarmTracker
 		Patch next = todo.get(0);
 		Status s = status(next, new long[1]);
 		String what = whatToDo(type, s);
-		String progress = (unlocked - todo.size() + 1) + " of " + unlocked + " patches";
+		String progress = (done + 1) + " of " + (done + todo.size()) + " patches";
 		return new FarmStep(type.getLabel() + ": " + next.name, what, next.teleport, next.location, progress);
 	}
 
@@ -334,13 +416,42 @@ public final class FarmTracker
 					default:
 						return "Rake the patch if needed, add compost and plant a seed (" + best(HERB_SEEDS, level) + " is the best you can plant).";
 				}
+			case SPIRIT_TREE:
+				switch (s)
+				{
+					case READY:
+						return "Check the spirit tree's health for XP. Leave it standing: you can travel with it.";
+					case DEAD:
+						return "Clear the dead tree with a spade, then plant a spirit sapling and pay the gardener "
+							+ SPIRIT_SAPLINGS[0][2] + ".";
+					case DISEASED:
+						return "Prune the diseased tree with secateurs (or pay the gardener), then carry on.";
+					default:
+						return "Rake the patch if needed, add compost, then plant a spirit sapling and pay the gardener "
+							+ SPIRIT_SAPLINGS[0][2] + ". You can have " + limitText() + ".";
+				}
+			case CALQUAT:
+				switch (s)
+				{
+					case READY:
+						return "Check the tree's health (or pick the calquats), then clear it with a spade and plant a calquat sapling. Pay the gardener "
+							+ CALQUAT_SAPLINGS[0][2] + " to protect it.";
+					case DEAD:
+						return "Clear the dead tree with a spade, then plant a calquat sapling and pay the gardener " + CALQUAT_SAPLINGS[0][2] + ".";
+					case DISEASED:
+						return "Prune the diseased tree with secateurs (or pay the gardener), then carry on.";
+					default:
+						return "Rake the patch if needed, add compost, then plant a calquat sapling and pay the gardener "
+							+ CALQUAT_SAPLINGS[0][2] + " to protect it.";
+				}
 			case TREE:
 			case FRUIT_TREE:
+			case HARDWOOD:
 			{
-				Object[] sapling = bestRow(type == RunType.TREE ? TREE_SAPLINGS : FRUIT_SAPLINGS, level);
+				Object[] sapling = bestRow(saplings(type), level);
 				String plant = sapling == null
 					? "You need a higher Farming level for this sapling."
-					: "plant a " + sapling[0] + " sapling and pay the gardener " + sapling[2] + " to protect it.";
+					: "plant " + article((String) sapling[0]) + " " + sapling[0] + " sapling and pay the gardener " + sapling[2] + " to protect it.";
 				switch (s)
 				{
 					case READY:
@@ -462,17 +573,34 @@ public final class FarmTracker
 				break;
 			case TREE:
 			case FRUIT_TREE:
+			case HARDWOOD:
+			case CALQUAT:
+			case SPIRIT_TREE:
 			{
-				Object[] sapling = bestRow(type == RunType.TREE ? TREE_SAPLINGS : FRUIT_SAPLINGS, level);
+				Object[] sapling = bestRow(saplings(type), level);
 				if (sapling == null)
 				{
-					out.add("Your Farming level is too low for any " + (type == RunType.TREE ? "tree" : "fruit tree") + " sapling yet");
+					out.add("Locked: needs " + saplings(type)[0][1] + " Farming");
 					return out;
 				}
-				out.add(patches + " x " + sapling[0] + " saplings");
-				out.add(patches + " x payment: " + sapling[2]);
-				out.add(patches + " x compost (ultracompost or a bottomless bucket)");
-				out.add("Spade, rake, coins for the gardeners");
+				if (patches == 0)
+				{
+					out.add("Locked: no patches unlocked yet (they need quests or Sailing)");
+					return out;
+				}
+				int count = type == RunType.SPIRIT_TREE ? Math.min(patches, spiritTreeLimit()) : patches;
+				out.add(count + " x " + sapling[0] + " saplings");
+				out.add(count + " x payment: " + sapling[2]);
+				out.add(count + " x compost (ultracompost or a bottomless bucket)");
+				out.add("Spade, rake, secateurs, coins for the gardeners");
+				if (type == RunType.HARDWOOD && (int) sapling[1] > 55)
+				{
+					out.add("If a patch won't take " + sapling[0] + ", plant mahogany or teak there");
+				}
+				if (type == RunType.SPIRIT_TREE)
+				{
+					out.add("You can have " + limitText() + " (more at 88, 93, 96 and 99 Farming)");
+				}
 				break;
 			}
 			default:
@@ -518,6 +646,10 @@ public final class FarmTracker
 		{
 			return false;
 		}
+		if (p.otherSkill != null && client.getRealSkillLevel(p.otherSkill) < p.otherLevel)
+		{
+			return false;
+		}
 		return p.diaryVarbit == -1 || client.getVarbitValue(p.diaryVarbit) >= 1;
 	}
 
@@ -531,6 +663,10 @@ public final class FarmTracker
 			return Status.UNKNOWN;
 		}
 
+		if (p.implementation == PatchImplementation.SPIRIT_TREE && parsed[0] == 20)
+		{
+			return Status.GROWN; // fully grown and already checked
+		}
 		PatchState state = p.implementation.forVarbitValue((int) parsed[0]);
 		if (state == null)
 		{
@@ -612,6 +748,50 @@ public final class FarmTracker
 		{
 			return null;
 		}
+	}
+
+	private static Object[][] saplings(RunType type)
+	{
+		switch (type)
+		{
+			case TREE:
+				return TREE_SAPLINGS;
+			case FRUIT_TREE:
+				return FRUIT_SAPLINGS;
+			case HARDWOOD:
+				return HARDWOOD_SAPLINGS;
+			case CALQUAT:
+				return CALQUAT_SAPLINGS;
+			case SPIRIT_TREE:
+				return SPIRIT_SAPLINGS;
+			default:
+				return HERB_SEEDS;
+		}
+	}
+
+	private static String article(String word)
+	{
+		return "AEIOU".indexOf(Character.toUpperCase(word.charAt(0))) >= 0 ? "an" : "a";
+	}
+
+	private int spiritTreeLimit()
+	{
+		int level = client.getRealSkillLevel(Skill.FARMING);
+		int limit = 0;
+		for (int[] row : SPIRIT_TREE_LIMITS)
+		{
+			if (level >= row[0])
+			{
+				limit = row[1];
+			}
+		}
+		return limit;
+	}
+
+	private String limitText()
+	{
+		int limit = spiritTreeLimit();
+		return limit >= 99 ? "as many spirit trees as you like" : limit + " spirit tree" + (limit == 1 ? "" : "s") + " at once";
 	}
 
 	private static String best(Object[][] table, int level)

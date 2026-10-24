@@ -4,6 +4,8 @@ import com.google.inject.Provides;
 import com.zerotomax.farming.FarmTracker;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import java.util.Objects;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -20,9 +23,11 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.gameval.InventoryID;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.events.PluginMessage;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
@@ -30,6 +35,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.AsyncBufferedImage;
 import net.runelite.client.util.HotkeyListener;
 
 @PluginDescriptor(
@@ -76,6 +82,10 @@ public class ZeroToMaxPlugin extends Plugin
 	@Inject
 	private ZeroToMaxPanel panel;
 
+	@Inject
+	private ItemManager itemManager;
+
+	/** Swapped from the Swing thread when the max cape picture loads, so guarded by this. */
 	private NavigationButton navButton;
 	private Planner planner;
 	private FarmTracker farmTracker;
@@ -161,19 +171,87 @@ public class ZeroToMaxPlugin extends Plugin
 		overlayManager.add(worldOverlay);
 		keyManager.registerKeyListener(hotkeyListener);
 
-		BufferedImage icon = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = icon.createGraphics();
-		g.setColor(Color.GREEN);
-		g.fillOval(4, 4, 16, 16);
-		g.dispose();
+		synchronized (this)
+		{
+			navButton = buildNavButton(placeholderIcon());
+			clientToolbar.addNavigation(navButton);
+		}
+		// The max cape picture comes from the game, so it loads once the client is ready.
+		AsyncBufferedImage cape = itemManager.getImage(ItemID.SKILLCAPE_MAX);
+		cape.onLoaded(() -> SwingUtilities.invokeLater(() -> swapIcon(fitIcon(cape))));
+	}
 
-		navButton = NavigationButton.builder()
+	private NavigationButton buildNavButton(BufferedImage icon)
+	{
+		return NavigationButton.builder()
 			.tooltip("Zero to Max Guide")
 			.icon(icon)
 			.priority(5)
 			.panel(panel)
 			.build();
+	}
+
+	private synchronized void swapIcon(BufferedImage icon)
+	{
+		if (navButton == null || icon == null)
+		{
+			return; // plugin was turned off, or the picture was empty
+		}
+		clientToolbar.removeNavigation(navButton);
+		navButton = buildNavButton(icon);
 		clientToolbar.addNavigation(navButton);
+	}
+
+	/** Crops the empty border off an item picture and scales it to fit the 16x16 sidebar slot. */
+	private static BufferedImage fitIcon(BufferedImage image)
+	{
+		int minX = image.getWidth(), minY = image.getHeight(), maxX = -1, maxY = -1;
+		for (int y = 0; y < image.getHeight(); y++)
+		{
+			for (int x = 0; x < image.getWidth(); x++)
+			{
+				if ((image.getRGB(x, y) >>> 24) != 0)
+				{
+					minX = Math.min(minX, x);
+					minY = Math.min(minY, y);
+					maxX = Math.max(maxX, x);
+					maxY = Math.max(maxY, y);
+				}
+			}
+		}
+		if (maxX < 0)
+		{
+			return null;
+		}
+		int w = maxX - minX + 1;
+		int h = maxY - minY + 1;
+		double scale = Math.min(16.0 / w, 16.0 / h);
+		int sw = Math.max(1, (int) Math.round(w * scale));
+		int sh = Math.max(1, (int) Math.round(h * scale));
+		BufferedImage out = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = out.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g.drawImage(image.getSubimage(minX, minY, w, h), (16 - sw) / 2, (16 - sh) / 2, sw, sh, null);
+		g.dispose();
+		return out;
+	}
+
+	/** Plain white cape outline, shown for a moment until the max cape picture loads. */
+	private static BufferedImage placeholderIcon()
+	{
+		BufferedImage icon = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = icon.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Path2D cape = new Path2D.Double();
+		cape.moveTo(5, 1);
+		cape.lineTo(11, 1);
+		cape.lineTo(14, 15);
+		cape.lineTo(2, 15);
+		cape.closePath();
+		g.setColor(Color.WHITE);
+		g.fill(cape);
+		g.dispose();
+		return icon;
 	}
 
 	@Override
@@ -185,10 +263,13 @@ public class ZeroToMaxPlugin extends Plugin
 		panel.setRunListener(null);
 		activeRun = null;
 		clearShortestPath();
-		if (navButton != null)
+		synchronized (this)
 		{
-			clientToolbar.removeNavigation(navButton);
-			navButton = null;
+			if (navButton != null)
+			{
+				clientToolbar.removeNavigation(navButton);
+				navButton = null;
+			}
 		}
 		activeDestination = null;
 	}
@@ -309,32 +390,25 @@ public class ZeroToMaxPlugin extends Plugin
 
 	private void updateFarming(FarmTracker.RunType run, Predicate<String> questDone)
 	{
-		String herb = farmTracker.timerText(FarmTracker.RunType.HERB, questDone);
-		String tree = farmTracker.timerText(FarmTracker.RunType.TREE, questDone);
-		String fruit = farmTracker.timerText(FarmTracker.RunType.FRUIT_TREE, questDone);
-		String birds = farmTracker.birdhouseTimerText();
-
+		List<String> timers = new ArrayList<>();
 		List<String> ready = new ArrayList<>();
-		if (herb.startsWith("Ready"))
+		for (FarmTracker.RunType type : FarmTracker.RunType.values())
 		{
-			ready.add("Herbs");
-		}
-		if (tree.startsWith("Ready"))
-		{
-			ready.add("Trees");
-		}
-		if (fruit.startsWith("Ready"))
-		{
-			ready.add("Fruit trees");
-		}
-		if (birds.startsWith("Ready"))
-		{
-			ready.add("Birdhouses");
+			String text = farmTracker.timerText(type, questDone);
+			if ("Locked".equals(text) && type != FarmTracker.RunType.HERB)
+			{
+				continue; // keep the list short: only runs you can do
+			}
+			timers.add(type.getShortName() + ": " + text);
+			if (text.startsWith("Ready"))
+			{
+				ready.add(type.getShortName());
+			}
 		}
 		farmAlertText = run != null || ready.isEmpty() ? "" : String.join(", ", ready) + " ready";
 
 		FarmTracker.RunType shown = run != null ? run : FarmTracker.RunType.HERB;
-		panel.setFarming(herb, tree, fruit, birds, runStatusText,
+		panel.setFarming(run, timers, runStatusText,
 			"What to bring: " + shown.getLabel(), farmTracker.checklist(shown, questDone));
 	}
 
