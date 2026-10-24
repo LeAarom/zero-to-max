@@ -120,4 +120,16 @@ public interface ZeroToMaxConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigItem(
+		keyName = "showSlayer",
+		name = "Show Slayer task help",
+		description = "Show your current Slayer task and the best way to do it",
+		section = goalsSection,
+		position = 12
+	)
+	default boolean showSlayer()
+	{
+		return true;
+	}
 }

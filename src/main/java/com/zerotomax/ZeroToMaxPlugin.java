@@ -80,6 +80,7 @@ public class ZeroToMaxPlugin extends Plugin
 	private Planner planner;
 	private FarmTracker farmTracker;
 	private TeleportFinder teleportFinder;
+	private SlayerHelper slayerHelper;
 	private boolean bankLoaded;
 	/** Last destination sent to Shortest Path, so we only send changes. */
 	private WorldPoint sentToShortestPath;
@@ -115,6 +116,9 @@ public class ZeroToMaxPlugin extends Plugin
 	/** e.g. "Herbs ready, Birdhouses ready" - shown on the overlay when no run is active. */
 	@Getter
 	private volatile String farmAlertText = "";
+	/** Current Slayer task and how to do it, for the overlay. Empty when off or no task. */
+	@Getter
+	private volatile String slayerText = "";
 
 	private final HotkeyListener hotkeyListener = new HotkeyListener(() -> config.cycleStyleHotkey())
 	{
@@ -139,6 +143,7 @@ public class ZeroToMaxPlugin extends Plugin
 		planner = new Planner(QuestData.all(), DiaryData.all());
 		farmTracker = new FarmTracker(client, configManager);
 		teleportFinder = new TeleportFinder(TeleportData.all());
+		slayerHelper = new SlayerHelper(SlayerData.all(), SlayerData.bosses());
 		bankLoaded = false;
 		activeRun = null;
 		panel.setRunListener(type ->
@@ -283,8 +288,22 @@ public class ZeroToMaxPlugin extends Plugin
 		}
 
 		updateFarming(run, questDone);
+		updateSlayer(style);
 		panel.update(currentStepTitle, activeMethodName, currentStepInstruction, gpsStatusText, progressText);
 		panel.setRoadmap(plan.roadmap);
+	}
+
+	private void updateSlayer(ZeroToMaxConfig.TrainingStyle style)
+	{
+		if (!config.showSlayer())
+		{
+			slayerText = "";
+			panel.setSlayer(java.util.Collections.singletonList("Turned off in settings."));
+			return;
+		}
+		slayerHelper.update(client);
+		slayerText = slayerHelper.overlayLine(style);
+		panel.setSlayer(slayerHelper.panelLines());
 	}
 
 	private void updateFarming(FarmTracker.RunType run, Predicate<String> questDone)

@@ -36,6 +36,7 @@ public class ZeroToMaxPanel extends PluginPanel
 	private final JLabel checklistTitleLabel = new JLabel();
 	private final JLabel checklistLabel = new JLabel();
 	private final JLabel roadmapLabel = new JLabel();
+	private final JLabel slayerLabel = new JLabel();
 
 	/** Set by the plugin. Called on the Swing thread with the run to start, or null to stop. */
 	private volatile Consumer<FarmTracker.RunType> runListener;
@@ -100,6 +101,12 @@ public class ZeroToMaxPanel extends PluginPanel
 		container.add(runBox);
 		container.add(spacer());
 
+		JPanel slayerBox = createSection("SLAYER TASK");
+		slayerLabel.setForeground(Color.LIGHT_GRAY);
+		slayerBox.add(slayerLabel);
+		container.add(slayerBox);
+		container.add(spacer());
+
 		JPanel roadmapBox = createSection("ROADMAP");
 		roadmapLabel.setForeground(Color.LIGHT_GRAY);
 		roadmapBox.add(roadmapLabel);
@@ -125,6 +132,11 @@ public class ZeroToMaxPanel extends PluginPanel
 			teleportLabel.setText(wrap("Teleport: " + teleport));
 			progressLabel.setText(wrap(progress == null || progress.isEmpty() ? "" : "Progress: " + progress));
 		});
+	}
+
+	public void setSlayer(List<String> lines)
+	{
+		SwingUtilities.invokeLater(() -> slayerLabel.setText(wrapLines(lines)));
 	}
 
 	public void setRoadmap(List<String> steps)
@@ -174,6 +186,16 @@ public class ZeroToMaxPanel extends PluginPanel
 		for (String item : items)
 		{
 			sb.append(i++).append(". ").append(escape(item)).append("<br/>");
+		}
+		return sb.append("</div></html>").toString();
+	}
+
+	private static String wrapLines(List<String> lines)
+	{
+		StringBuilder sb = new StringBuilder("<html><div style='width:160px'>");
+		for (String line : lines)
+		{
+			sb.append(escape(line)).append("<br/>");
 		}
 		return sb.append("</div></html>").toString();
 	}

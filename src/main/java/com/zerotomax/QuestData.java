@@ -80,7 +80,7 @@ final class QuestData
 		add(list, "COLD_WAR", "INTERMEDIATE", true, "AGILITY:30,CONSTRUCTION:34,CRAFTING:30,HUNTER:10,THIEVING:15", "", 0, 0, 2597, 3266, 0, "Talk to Larry at the Ardougne Zoo.");
 		add(list, "CONTACT", "EXPERIENCED", true, "", "ICTHLARINS_LITTLE_HELPER,PRINCE_ALI_RESCUE", 0, 0, 3281, 2772, 0, "Talk to the High Priest in Sophanem.");
 		add(list, "COOKS_ASSISTANT", "NOVICE", true, "", "", 0, 0, 3206, 3214, 0, "Give the Cook in Lumbridge Castle's kitchen the required items to finish the quest.");
-		add(list, "CRAB_QUEST", "INTERMEDIATE", true, "FISHING:30,SAILING:40", "", 0, 0, 0, 0, 0, "");
+		add(list, "CRAB_QUEST", "INTERMEDIATE", true, "FISHING:30,SAILING:40", "", 0, 0, 3055, 2639, 0, "Drink from the Bottle on the shore of Dognose Island.");
 		add(list, "CREATURE_OF_FENKENSTRAIN", "INTERMEDIATE", true, "CRAFTING:20,THIEVING:25", "PRIEST_IN_PERIL,THE_RESTLESS_GHOST", 0, 0, 3492, 3474, 0, "Head to the Canifis bar and either buy the pickled brain for 50 coins, or telegrab it.");
 		add(list, "CURRENT_AFFAIRS", "NOVICE", true, "FISHING:10,SAILING:22", "PANDEMONIUM", 0, 0, 2803, 3430, 0, "Talk to Arhein on the northern part of the Catherby Docks to start the quest.");
 		add(list, "DARKNESS_OF_HALLOWVALE", "EXPERIENCED", true, "AGILITY:26,CONSTRUCTION:5,CRAFTING:32,MAGIC:33,MINING:20,STRENGTH:40,THIEVING:22", "IN_AID_OF_THE_MYREQUE", 0, 0, 3491, 3230, 0, "");
@@ -100,7 +100,7 @@ final class QuestData
 		add(list, "DWARF_CANNON", "NOVICE", true, "", "", 0, 0, 2567, 3460, 0, "Talk to Captain Lawgof near the Coal Truck Mining Site (north of Fishing Guild, West of McGrubor's Wood).");
 		add(list, "EADGARS_RUSE", "INTERMEDIATE", true, "HERBLORE:31", "DRUIDIC_RITUAL,TROLL_STRONGHOLD", 0, 0, 2899, 3429, 0, "Talk to Sanfew upstairs in the Taverley herblore store.");
 		add(list, "EAGLES_PEAK", "NOVICE", true, "HUNTER:27", "", 0, 0, 2607, 3264, 0, "Speak to Charlie in the Ardougne Zoo.");
-		add(list, "ELEMENTAL_WORKSHOP_I", "NOVICE", true, "CRAFTING:20,MINING:20,SMITHING:20", "", 0, 0, 0, 0, 0, "");
+		add(list, "ELEMENTAL_WORKSHOP_I", "NOVICE", true, "CRAFTING:20,MINING:20,SMITHING:20", "", 0, 0, 2716, 3482, 0, "Search the bookcase in the house in Seers' Village.");
 		add(list, "ELEMENTAL_WORKSHOP_II", "INTERMEDIATE", true, "MAGIC:20,SMITHING:30", "ELEMENTAL_WORKSHOP_I", 0, 0, 3367, 3335, 0, "Search the marked bookcase in the Exam Centre in the Dig Site.");
 		add(list, "ENAKHRAS_LAMENT", "EXPERIENCED", true, "CRAFTING:50,FIREMAKING:45,MAGIC:39,PRAYER:43", "", 0, 0, 3190, 2925, 0, "Before you begin, ensure that you have enough prayer points to use");
 		add(list, "ENLIGHTENED_JOURNEY", "INTERMEDIATE", true, "CRAFTING:36,FARMING:30,FIREMAKING:20", "", 20, 0, 3047, 3236, 0, "Bank all weapons and armour you have, and go to Port Sarim to get a boat to Entrana.");
@@ -108,7 +108,7 @@ final class QuestData
 		add(list, "ETHICALLY_ACQUIRED_ANTIQUITIES", "NOVICE", true, "THIEVING:25", "CHILDREN_OF_THE_SUN,SHIELD_OF_ARRAV", 0, 0, 1721, 3165, 0, "Inspect the empty display case at the ");
 		add(list, "FAIRYTALE_II__CURE_A_QUEEN", "EXPERIENCED", true, "FARMING:49,HERBLORE:57,THIEVING:40", "FAIRYTALE_I__GROWING_PAINS", 0, 0, 3078, 3256, 0, "Talk to Martin in the Draynor Market.");
 		add(list, "FAIRYTALE_I__GROWING_PAINS", "INTERMEDIATE", true, "", "LOST_CITY,NATURE_SPIRIT", 0, 0, 3078, 3256, 0, "Talk to Martin in the Draynor Market.");
-		add(list, "FALLEN_FROM_GRACE", "EXPERIENCED", true, "CRAFTING:60,MINING:53,RUNECRAFT:47,SAILING:62", "PANDEMONIUM", 0, 0, 0, 0, 0, "");
+		add(list, "FALLEN_FROM_GRACE", "EXPERIENCED", true, "CRAFTING:60,MINING:53,RUNECRAFT:47,SAILING:62", "PANDEMONIUM", 0, 0, 2575, 2296, 0, "Talk to Ffion to be allowed onto Wyrmscraig island.");
 		add(list, "FAMILY_CREST", "EXPERIENCED", true, "CRAFTING:40,MAGIC:59,MINING:40,SMITHING:40", "", 0, 0, 3280, 3402, 0, "Talk to Dimintheis in south east Varrock.");
 		add(list, "FIGHT_ARENA", "INTERMEDIATE", true, "", "", 0, 0, 2565, 3199, 0, "Talk to Lady Servil, west-southwest of the Monastery south of Ardougne.");
 		add(list, "FISHING_CONTEST", "NOVICE", true, "FISHING:10", "", 0, 0, 2821, 3486, 0, "Talk to Vestri just north of Catherby.");
@@ -125,10 +125,10 @@ final class QuestData
 		add(list, "HOLY_GRAIL", "INTERMEDIATE", true, "ATTACK:20", "MERLINS_CRYSTAL", 0, 0, 2763, 3513, 0, "Talk to King Arthur in Camelot Castle to start the quest.");
 		add(list, "HORROR_FROM_THE_DEEP", "INTERMEDIATE", true, "AGILITY:35", "ALFRED_GRIMHANDS_BARCRAWL", 0, 0, 2507, 3634, 0, "Talk to Larrissa outside ");
 		add(list, "ICTHLARINS_LITTLE_HELPER", "INTERMEDIATE", true, "", "GERTRUDES_CAT", 0, 0, 3316, 2849, 0, "Talk to the Wanderer west of the Agility Pyramid.");
-		add(list, "IMP_CATCHER", "NOVICE", true, "", "", 0, 0, 0, 0, 0, "");
+		add(list, "IMP_CATCHER", "NOVICE", true, "", "", 0, 0, 3103, 3159, 0, "Climb to the top of the Wizards' Tower and talk to Wizard Mizgog.");
 		add(list, "IN_AID_OF_THE_MYREQUE", "INTERMEDIATE", true, "CRAFTING:25,MAGIC:7,MINING:15", "IN_SEARCH_OF_THE_MYREQUE", 0, 0, 3495, 3464, 0, "Enter the trapdoor behind the Canifis Pub.");
 		add(list, "IN_SEARCH_OF_THE_MYREQUE", "INTERMEDIATE", true, "AGILITY:25", "NATURE_SPIRIT", 0, 0, 3503, 3477, 0, "Talk to Vanstrom Klause in the Canifis pub.");
-		add(list, "JUNGLE_POTION", "NOVICE", true, "HERBLORE:3", "DRUIDIC_RITUAL", 0, 0, 0, 0, 0, "");
+		add(list, "JUNGLE_POTION", "NOVICE", true, "HERBLORE:3", "DRUIDIC_RITUAL", 0, 0, 2809, 3085, 0, "Talk to Trufitus in Tai Bwo Wannai.");
 		add(list, "KINGS_RANSOM", "EXPERIENCED", true, "DEFENCE:65,MAGIC:45", "BLACK_KNIGHTS_FORTRESS,HOLY_GRAIL,MURDER_MYSTERY,ONE_SMALL_FAVOUR", 0, 0, 2741, 3557, 0, "Talk to Gossip, just south of the Sinclair Mansion.");
 		add(list, "LAND_OF_THE_GOBLINS", "EXPERIENCED", true, "AGILITY:38,FISHING:40,HERBLORE:48,THIEVING:45", "ANOTHER_SLICE_OF_HAM,FISHING_CONTEST", 0, 0, 3209, 3216, 0, "Enter the Lumbridge Castle basement.");
 		add(list, "LEGENDS_QUEST", "MASTER", true, "AGILITY:50,CRAFTING:50,HERBLORE:45,MAGIC:56,MINING:52,PRAYER:42,SMITHING:50,STRENGTH:50,THIEVING:50,WOODCUTTING:50", "FAMILY_CREST,HEROES_QUEST,SHILO_VILLAGE,UNDERGROUND_PASS,WATERFALL_QUEST", 107, 0, 2729, 3348, 0, "Talk to one of the guards outside the Legends' Guild.");
@@ -159,7 +159,7 @@ final class QuestData
 		add(list, "PRINCE_ALI_RESCUE", "NOVICE", true, "", "", 0, 0, 3298, 3163, 0, "Talk to Hassan in the Al Kharid Palace.");
 		add(list, "PRYING_TIMES", "INTERMEDIATE", true, "SAILING:12,SMITHING:30", "PANDEMONIUM,THE_KNIGHTS_SWORD", 0, 0, 3050, 2966, 0, "Talk to 'Squawking' Steve Beanie behind the Pandemonium bar to start the quest. You can travel there via Captain Tobias on Port Sarim docks for 30gp.");
 		add(list, "RAG_AND_BONE_MAN_I", "NOVICE", true, "", "", 0, 0, 3362, 3502, 0, "Talk to the Odd Old Man east of Varrock.");
-		add(list, "RAG_AND_BONE_MAN_II", "EXPERIENCED", true, "DEFENCE:20,SLAYER:40", "RAG_AND_BONE_MAN_I,SKIPPY_AND_THE_MOGRES", 0, 0, 0, 0, 0, "");
+		add(list, "RAG_AND_BONE_MAN_II", "EXPERIENCED", true, "DEFENCE:20,SLAYER:40", "RAG_AND_BONE_MAN_I,SKIPPY_AND_THE_MOGRES", 0, 0, 3362, 3502, 0, "Talk to the Odd Old Man north-east of Varrock.");
 		add(list, "RATCATCHERS", "INTERMEDIATE", true, "", "ICTHLARINS_LITTLE_HELPER", 0, 0, 3151, 3413, 0, "Talk to Gertrude west of Varrock.");
 		add(list, "RECIPE_FOR_DISASTER", "NOVICE", true, "AGILITY:48,COOKING:70,CRAFTING:42,FIREMAKING:20", "BIG_CHOMPY_BIRD_HUNTING,BIOHAZARD,COOKS_ASSISTANT,DEMON_SLAYER,DESERT_TREASURE_I,FAMILY_CREST,FISHING_CONTEST,GERTRUDES_CAT,GOBLIN_DIPLOMACY,HEROES_QUEST,HORROR_FROM_THE_DEEP,MONKEY_MADNESS_I,MURDER_MYSTERY,NATURE_SPIRIT,RUM_DEAL*,SHADOW_OF_THE_STORM,SHILO_VILLAGE,UNDERGROUND_PASS,WATERFALL_QUEST,WITCHS_HOUSE", 175, 0, 3209, 3215, 0, "Talk to the Lumbridge Cook.");
 		add(list, "RECRUITMENT_DRIVE", "NOVICE", true, "", "BLACK_KNIGHTS_FORTRESS,DRUIDIC_RITUAL", 0, 0, 2955, 3339, 0, "Climb up the stairs to the first floor on the Falador Castle.");
@@ -223,12 +223,12 @@ final class QuestData
 		add(list, "THRONE_OF_MISCELLANIA", "EXPERIENCED", true, "FARMING:10,MINING:30,SMITHING:35,WOODCUTTING:45", "HEROES_QUEST,THE_FREMENNIK_TRIALS", 0, 0, 2629, 3693, 0, "");
 		add(list, "TOWER_OF_LIFE", "NOVICE", true, "CONSTRUCTION:10", "", 0, 0, 2637, 3218, 0, "Talk to Effigy outside the Tower of Life.");
 		add(list, "TREE_GNOME_VILLAGE", "INTERMEDIATE", true, "", "", 0, 0, 2541, 3170, 0, "Follow the marked path to walk through the maze.");
-		add(list, "TRIBAL_TOTEM", "INTERMEDIATE", true, "THIEVING:21", "", 0, 0, 0, 0, 0, "");
+		add(list, "TRIBAL_TOTEM", "INTERMEDIATE", true, "THIEVING:21", "", 0, 0, 2794, 3182, 0, "Talk to Kangai Mau in the Brimhaven food store.");
 		add(list, "TROLL_ROMANCE", "INTERMEDIATE", true, "AGILITY:28", "TROLL_STRONGHOLD", 0, 0, 2839, 3690, 0, "Enter the Troll Stronghold.");
 		add(list, "TROLL_STRONGHOLD", "INTERMEDIATE", true, "AGILITY:15", "DEATH_PLATEAU", 0, 0, 2895, 3528, 0, "Talk to Denulth in Burthorpe.");
 		add(list, "TROUBLED_TORTUGANS", "EXPERIENCED", true, "CONSTRUCTION:48,CRAFTING:34,HUNTER:45,SAILING:45,SLAYER:51,WOODCUTTING:40", "PANDEMONIUM", 0, 0, 2962, 2605, 0, "Talk to the Injured Tortugan on the small island north-west of The Great Conch to start the quest.");
 		add(list, "TWILIGHTS_PROMISE", "INTERMEDIATE", true, "", "CHILDREN_OF_THE_SUN", 0, 0, 3281, 3413, 0, "Talk to Regulus Cento outside Varrock's East Gate to travel to Varlamore.");
-		add(list, "UNDERGROUND_PASS", "EXPERIENCED", true, "RANGED:25", "BIOHAZARD", 0, 0, 0, 0, 0, "");
+		add(list, "UNDERGROUND_PASS", "EXPERIENCED", true, "RANGED:25", "BIOHAZARD", 0, 0, 2572, 3296, 0, "Go to the second floor of Ardougne Castle and talk to King Lathas.");
 		add(list, "VAMPYRE_SLAYER", "INTERMEDIATE", true, "", "", 0, 0, 3098, 3268, 0, "Talk to Morgan in the north of Draynor Village.");
 		add(list, "WANTED", "INTERMEDIATE", true, "", "ENTER_THE_ABYSS,PRIEST_IN_PERIL,RECRUITMENT_DRIVE,THE_LOST_TRIBE", 32, 0, 2997, 3373, 0, "Talk to Sir Tiffy Cashien in Falador Park.");
 		add(list, "WATCHTOWER", "INTERMEDIATE", true, "AGILITY:25,HERBLORE:14,MAGIC:15,MINING:40,THIEVING:15", "", 0, 0, 2548, 3119, 0, "Go to the top floor of the Watchtower north of Yanille and talk to the Watchtower Wizard.");
@@ -239,7 +239,7 @@ final class QuestData
 		add(list, "WITCHS_POTION", "NOVICE", true, "", "", 0, 0, 2968, 3205, 0, "Talk to Hetty in Rimmington.");
 		add(list, "X_MARKS_THE_SPOT", "NOVICE", true, "", "", 0, 0, 3228, 3242, 0, "Talk to Veos in The Sheared Ram pub in Lumbridge to start the quest.");
 		add(list, "ZOGRE_FLESH_EATERS", "INTERMEDIATE", true, "HERBLORE:8,RANGED:30,SMITHING:4", "BIG_CHOMPY_BIRD_HUNTING,JUNGLE_POTION", 0, 0, 2447, 3049, 0, "Talk to Grish south of Castle Wars.");
-		add(list, "ALFRED_GRIMHANDS_BARCRAWL", "MINIQUEST", false, "", "", 0, 0, 0, 0, 0, "");
+		add(list, "ALFRED_GRIMHANDS_BARCRAWL", "MINIQUEST", false, "", "", 0, 0, 2544, 3568, 0, "Talk to a barbarian guard outside the Barbarian Agility Course at the Barbarian Outpost.");
 		add(list, "CURSE_OF_THE_EMPTY_LORD", "MINIQUEST", false, "", "DESERT_TREASURE_I*,THE_RESTLESS_GHOST*", 0, 0, 2556, 3445, 0, "Talk to the Mysterious Ghost outside Glarial's Tomb.");
 		add(list, "ENTER_THE_ABYSS", "MINIQUEST", false, "", "RUNE_MYSTERIES", 0, 0, 3102, 3557, 0, "Talk to the Mage");
 		add(list, "HIS_FAITHFUL_SERVANTS", "MINIQUEST", false, "", "PRIEST_IN_PERIL", 0, 0, 3564, 3294, 0, "Talk to the Strange Old Man at Barrows east of Burgh de Rott.");

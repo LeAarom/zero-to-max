@@ -58,6 +58,12 @@ public class ZeroToMaxOverlay extends OverlayPanel
 			addLine("Progress:", progress, Color.ORANGE);
 		}
 
+		String slayer = plugin.getSlayerText();
+		if (slayer != null && !slayer.isEmpty())
+		{
+			addLine("Slayer:", slayer, Color.RED);
+		}
+
 		String farm = plugin.getFarmAlertText();
 		if (farm != null && !farm.isEmpty())
 		{
