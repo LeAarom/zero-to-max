@@ -84,11 +84,12 @@ public class ZeroToMaxPanel extends PluginPanel
 		container.add(spacer());
 
 		JPanel runBox = createSection("FARM RUN GPS");
-		JPanel buttons = new JPanel(new GridLayout(2, 2, 4, 4));
+		JPanel buttons = new JPanel(new GridLayout(3, 2, 4, 4));
 		buttons.setOpaque(false);
 		buttons.add(runButton("Herb run", FarmTracker.RunType.HERB));
 		buttons.add(runButton("Tree run", FarmTracker.RunType.TREE));
 		buttons.add(runButton("Fruit trees", FarmTracker.RunType.FRUIT_TREE));
+		buttons.add(runButton("Birdhouses", FarmTracker.RunType.BIRDHOUSE));
 		buttons.add(runButton("Stop run", null));
 		buttons.setAlignmentX(LEFT_ALIGNMENT);
 		runBox.add(buttons);

@@ -32,7 +32,8 @@ public final class FarmTracker
 	{
 		HERB("Herb run"),
 		TREE("Tree run"),
-		FRUIT_TREE("Fruit tree run");
+		FRUIT_TREE("Fruit tree run"),
+		BIRDHOUSE("Birdhouse run");
 
 		@Getter
 		private final String label;
@@ -181,6 +182,23 @@ public final class FarmTracker
 		VarPlayerID.BIRDHOUSE_TRANSMIT_C, VarPlayerID.BIRDHOUSE_TRANSMIT_D};
 	private static final long BIRDHOUSE_SECONDS = 50 * 60;
 
+	// {name, Hunter level, Crafting level, logs} - OSRS Wiki, Bird house trapping
+	private static final Object[][] BIRDHOUSES = {
+		{"Regular", 5, 5, "logs"}, {"Oak", 14, 15, "oak logs"}, {"Willow", 24, 25, "willow logs"},
+		{"Teak", 34, 35, "teak logs"}, {"Maple", 44, 45, "maple logs"}, {"Mahogany", 49, 50, "mahogany logs"},
+		{"Yew", 59, 60, "yew logs"}, {"Magic", 74, 75, "magic logs"}, {"Redwood", 89, 90, "redwood logs"}};
+
+	/**
+	 * Fossil Island birdhouse spots, in run order. Exact spot tiles aren't available, so the GPS goes
+	 * to the magic mushtree next to each pair (mushtree locations from Shortest Path's data).
+	 * Varps follow RuneLite's BirdHouseSpace.
+	 */
+	private static final Object[][] BIRDHOUSE_SPOTS = {
+		{"Verdant Valley (north-east)", VarPlayerID.BIRDHOUSE_TRANSMIT_C, 3760, 3758, "Verdant Valley, south of the Museum Camp: the north-east spot"},
+		{"Verdant Valley (south-west)", VarPlayerID.BIRDHOUSE_TRANSMIT_D, 3760, 3758, "Verdant Valley: the south-west spot"},
+		{"Mushroom Meadow (north)", VarPlayerID.BIRDHOUSE_TRANSMIT_A, 3676, 3871, "Mushroom Meadow: directly north of the magic mushtree"},
+		{"Mushroom Meadow (south)", VarPlayerID.BIRDHOUSE_TRANSMIT_B, 3676, 3871, "Mushroom Meadow: by the entrance to the Tar Swamp"}};
+
 	private final Client client;
 	private final ConfigManager configManager;
 
@@ -195,6 +213,10 @@ public final class FarmTracker
 	/** "Ready!", "mm:ss" until the first patch is ready, or a hint if nothing is tracked. */
 	public String timerText(RunType type, Predicate<String> questDone)
 	{
+		if (type == RunType.BIRDHOUSE)
+		{
+			return birdhouseTimerText();
+		}
 		long now = Instant.now().getEpochSecond();
 		long earliest = Long.MAX_VALUE;
 		boolean anyKnown = false;
@@ -264,6 +286,10 @@ public final class FarmTracker
 	/** The next patch to do on this run, or null when the run is finished. */
 	public FarmStep nextStep(RunType type, Predicate<String> questDone)
 	{
+		if (type == RunType.BIRDHOUSE)
+		{
+			return nextBirdhouse(questDone);
+		}
 		List<Patch> todo = new ArrayList<>();
 		int unlocked = 0;
 		for (Patch p : PATCHES)
@@ -332,9 +358,85 @@ public final class FarmTracker
 		}
 	}
 
+	private FarmStep nextBirdhouse(Predicate<String> questDone)
+	{
+		if (!questDone.test("BONE_VOYAGE") || client.getRealSkillLevel(Skill.HUNTER) < 5)
+		{
+			return null;
+		}
+		long now = Instant.now().getEpochSecond();
+		Object[] tier = bestBirdhouse();
+		String house = tier == null ? "bird house" : tier[0] + " bird house";
+		int done = 0;
+		for (Object[] spot : BIRDHOUSE_SPOTS)
+		{
+			long[] parsed = parse(configManager.getRSProfileConfiguration(TimeTrackingConfig.CONFIG_GROUP,
+				TimeTrackingConfig.BIRD_HOUSE + "." + spot[1]));
+			String what;
+			if (parsed == null || parsed[0] <= 0)
+			{
+				what = "Build and place a " + house + ", then add 10 seeds.";
+			}
+			else if (parsed[0] % 3 != 0)
+			{
+				what = "Add 10 seeds to the bird house.";
+			}
+			else if (parsed[1] + BIRDHOUSE_SECONDS <= now)
+			{
+				what = "Dismantle the full bird house, then place a new " + house + " and add 10 seeds.";
+			}
+			else
+			{
+				done++;
+				continue; // seeded and still filling: done for this run
+			}
+			WorldPoint where = new WorldPoint((int) spot[2], (int) spot[3], 0);
+			return new FarmStep("Birdhouse run: " + spot[0], spot[4] + ". " + what,
+				"Digsite pendant (Fossil Island), then the magic mushtrees", where,
+				(done + 1) + " of " + BIRDHOUSE_SPOTS.length + " spots");
+		}
+		return null;
+	}
+
+	/** Best bird house for both your Hunter and Crafting level. */
+	private Object[] bestBirdhouse()
+	{
+		int hunter = client.getRealSkillLevel(Skill.HUNTER);
+		int crafting = client.getRealSkillLevel(Skill.CRAFTING);
+		Object[] best = null;
+		for (Object[] row : BIRDHOUSES)
+		{
+			if ((int) row[1] <= hunter && (int) row[2] <= crafting)
+			{
+				best = row;
+			}
+		}
+		return best;
+	}
+
 	/** What to bring for a run, based on Farming level and unlocked patches. */
 	public List<String> checklist(RunType type, Predicate<String> questDone)
 	{
+		if (type == RunType.BIRDHOUSE)
+		{
+			List<String> out = new ArrayList<>();
+			if (!questDone.test("BONE_VOYAGE"))
+			{
+				out.add("Finish Bone Voyage first to reach Fossil Island");
+				return out;
+			}
+			Object[] tier = bestBirdhouse();
+			if (tier == null)
+			{
+				out.add("You need 5 Hunter and 5 Crafting for bird houses");
+				return out;
+			}
+			out.add("4 x " + tier[0] + " bird houses, or 4 x " + tier[3] + " + 4 clockwork + hammer + chisel to build them");
+			out.add("40 low-level seeds (10 each) or 20 high-level seeds: hop, herb, flower, bush or allotment");
+			out.add("Digsite pendant (Fossil Island)");
+			out.add("Spots: 2 in Verdant Valley, 2 in Mushroom Meadow (use the magic mushtrees)");
+			return out;
+		}
 		int level = client.getRealSkillLevel(Skill.FARMING);
 		List<String> teleports = new ArrayList<>();
 		int patches = 0;
